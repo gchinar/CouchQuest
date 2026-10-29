@@ -1,0 +1,46 @@
+services:
+  catalog-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: catalog
+      POSTGRES_USER: catalog
+      POSTGRES_PASSWORD: ${CATALOG_DB_PASSWORD:?Set CATALOG_DB_PASSWORD}
+    volumes: [catalog-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U catalog -d catalog']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  session-db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: sessions
+      POSTGRES_USER: sessions
+      POSTGRES_PASSWORD: ${SESSION_DB_PASSWORD:?Set SESSION_DB_PASSWORD}
+    volumes: [session-data:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, 'pg_isready -U sessions -d sessions']
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  catalog:
+    build: ../catalog-service
+    image: couchquest-catalog:1.0
+    environment:
+      DATABASE_URL: postgresql+psycopg://catalog:${CATALOG_DB_PASSWORD}@catalog-db:5432/catalog
+    ports: ['127.0.0.1:8001:8000']
+    depends_on:
+      catalog-db: {condition: service_healthy}
+  session:
+    build: ../session-service
+    image: couchquest-session:1.0
+    environment:
+      DATABASE_URL: postgresql+psycopg://sessions:${SESSION_DB_PASSWORD}@session-db:5432/sessions
+      CATALOG_URL: http://catalog:8000
+    ports: ['127.0.0.1:8002:8000']
+    depends_on:
+      session-db: {condition: service_healthy}
+      catalog: {condition: service_started}
+volumes:
+  catalog-data:
+  session-data:
