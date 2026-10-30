@@ -1,0 +1,78 @@
+name: CI and Minikube deployment
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/deploy.yml'
+      - '.gitmodules'
+      - 'catalog-service'
+      - 'session-service'
+      - 'deployment/**'
+      - 'smoke_test.py'
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test-build-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Test Catalog independently
+        working-directory: catalog-service
+        run: |
+          pip install -r requirements-dev.txt
+          python -m pytest -q
+      - name: Test Session independently
+        working-directory: session-service
+        run: |
+          pip install -r requirements-dev.txt
+          python -m pytest -q
+      - name: Install pinned Minikube
+        run: |
+          curl -fsSL https://github.com/kubernetes/minikube/releases/download/v1.39.0/minikube-linux-amd64 -o minikube
+          curl -fsSL https://github.com/kubernetes/minikube/releases/download/v1.39.0/minikube-linux-amd64.sha256 -o minikube.sha256
+          printf '%s  minikube\n' "$(cat minikube.sha256)" | sha256sum -c -
+          chmod +x minikube
+          sudo install minikube /usr/local/bin/minikube
+      - name: Create temporary deployment cluster
+        run: minikube start -p couchquest --driver=docker --cpus=2 --memory=3072 --kubernetes-version=v1.35.0 --keep-context
+      - name: Build independent service images in Minikube
+        run: |
+          minikube -p couchquest image build -t couchquest-catalog:1.0 catalog-service
+          minikube -p couchquest image build -t couchquest-session:1.0 session-service
+      - name: Deploy application to Kubernetes
+        run: python deployment/deploy.py
+      - name: Verify deployed application through HTTP
+        run: |
+          mkdir -p runtime-evidence
+          minikube -p couchquest kubectl -- --context couchquest -n couchquest port-forward service/catalog 18001:8000 > runtime-evidence/catalog-forward.log 2>&1 &
+          CATALOG_PID=$!
+          minikube -p couchquest kubectl -- --context couchquest -n couchquest port-forward service/session 18002:8000 > runtime-evidence/session-forward.log 2>&1 &
+          SESSION_PID=$!
+          trap 'kill "$CATALOG_PID" "$SESSION_PID" || true' EXIT
+          for port in 18001 18002; do
+            curl --fail --retry 30 --retry-connrefused --retry-delay 1 http://localhost:$port/health/ready
+          done
+          CATALOG_URL=http://localhost:18001 SESSION_URL=http://localhost:18002 python smoke_test.py > runtime-evidence/kubernetes-http.json
+      - name: Record deployment diagnostics
+        if: always()
+        run: |
+          mkdir -p runtime-evidence
+          minikube -p couchquest kubectl -- --context couchquest -n couchquest get deployments,pods,services,pvc -o wide > runtime-evidence/resources.txt 2>&1 || true
+          minikube -p couchquest kubectl -- --context couchquest -n couchquest get events --sort-by=.lastTimestamp > runtime-evidence/events.txt 2>&1 || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: minikube-deployment-evidence
+          path: runtime-evidence/
+      - name: Remove temporary CI cluster
+        if: always()
+        run: minikube delete -p couchquest || true

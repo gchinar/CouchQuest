@@ -10,7 +10,7 @@ This is a backend assignment solution, not a playable game engine. Rendering, co
 - Independent Game Catalog service: https://github.com/gchinar/couchquest-catalog
 - Independent Play Session service: https://github.com/gchinar/couchquest-session
 
-The service folders in this repository are the submitted snapshot. Each separate service repository has its own tests, dependencies, Dockerfile and CI workflow.
+The service folders are Git submodules pinned to commits in their independent repositories. Develop and test each service in its own repository. Update the pinned submodule commit here when adopting a new release. Each service also owns its standalone Kubernetes manifests and deployment script. The downloadable submission ZIP includes source snapshots for convenience.
 
 ## Included and remaining work
 
@@ -163,8 +163,8 @@ Four containers run: Catalog API, Session API, Catalog PostgreSQL and Session Po
 Requires Docker running, Minikube and kubectl. Execute from the package root. Use a dedicated Minikube profile so the commands target this assignment cluster.
 
 ```bash
-minikube start -p couchquest --driver=docker --cpus=2 --memory=4096
-kubectl config use-context couchquest
+minikube start -p couchquest --driver=docker --cpus=2 --memory=2800 --kubernetes-version=v1.35.0 --keep-context
+minikube -p couchquest kubectl -- --context couchquest get nodes
 minikube -p couchquest image build -t couchquest-catalog:1.0 catalog-service
 minikube -p couchquest image build -t couchquest-session:1.0 session-service
 kubectl create namespace couchquest --dry-run=client -o yaml | kubectl apply -f -
@@ -233,11 +233,11 @@ git clone https://github.com/gchinar/couchquest-session.git
 For the complete deployment layout used by Compose and the README instructions:
 
 ```bash
-git clone https://github.com/gchinar/CouchQuest.git
+git clone --recurse-submodules https://github.com/gchinar/CouchQuest.git
 cd CouchQuest
 ```
 
-The included workflow runs tests and builds a Docker image on push or pull request. It is CI only: image publishing and cluster deployment are not configured. The complete CouchQuest repository contains the report, shared deployment files and Postman collection.
+The included workflow runs tests and builds a Docker image on push or pull request. Each service retains independent CI. The solution-level CI/CD workflow additionally tests both pinned service versions, builds images, creates a temporary Minikube cluster, deploys the APIs and databases, verifies the full HTTP workflow, and uploads deployment evidence. It then removes only that temporary CI cluster. The workflow runs on main pushes affecting deployment inputs and can be run manually. It does not reach into the laptop or deploy to a production cloud cluster. The complete CouchQuest repository contains the report, shared deployment files and Postman collection.
 
 ## Testing and evidence
 

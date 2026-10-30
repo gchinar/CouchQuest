@@ -1,0 +1,6 @@
+[submodule "catalog-service"]
+	path = catalog-service
+	url = https://github.com/gchinar/couchquest-catalog.git
+[submodule "session-service"]
+	path = session-service
+	url = https://github.com/gchinar/couchquest-session.git
