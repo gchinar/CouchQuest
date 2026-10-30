@@ -1,0 +1,5 @@
+NAMES                          IMAGE                    STATUS                        PORTS
+couchquest-demo-session-1      couchquest-session:1.0   Up About a minute             127.0.0.1:8002->8000/tcp
+couchquest-demo-catalog-1      couchquest-catalog:1.0   Up About a minute             127.0.0.1:8001->8000/tcp
+couchquest-demo-catalog-db-1   postgres:16-alpine       Up About a minute (healthy)   5432/tcp
+couchquest-demo-session-db-1   postgres:16-alpine       Up About a minute (healthy)   5432/tcp

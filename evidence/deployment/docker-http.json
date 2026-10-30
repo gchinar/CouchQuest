@@ -1,0 +1,304 @@
+{
+  "environment": "Actual Docker Compose deployment on this machine; separate Catalog and Session containers and separate PostgreSQL 16 containers",
+  "checks": 11,
+  "calls": [
+    {
+      "method": "POST",
+      "url": "http://localhost:8001/games",
+      "request": {
+        "title": "Twin Trails",
+        "platform": "PC",
+        "display_mode": "split_screen",
+        "min_players": 2,
+        "max_players": 2
+      },
+      "status": 201,
+      "response": {
+        "id": "84c7d869-d63c-4e8c-a83c-9f4d9221f118",
+        "title": "Twin Trails",
+        "platform": "PC",
+        "display_mode": "split_screen",
+        "min_players": 2,
+        "max_players": 2
+      }
+    },
+    {
+      "method": "GET",
+      "url": "http://localhost:8001/games?display_mode=split_screen&players=2",
+      "request": null,
+      "status": 200,
+      "response": [
+        {
+          "id": "84c7d869-d63c-4e8c-a83c-9f4d9221f118",
+          "title": "Twin Trails",
+          "platform": "PC",
+          "display_mode": "split_screen",
+          "min_players": 2,
+          "max_players": 2
+        }
+      ]
+    },
+    {
+      "method": "POST",
+      "url": "http://localhost:8002/sessions",
+      "request": {
+        "game_id": "84c7d869-d63c-4e8c-a83c-9f4d9221f118",
+        "host_id": "alice",
+        "controller_count": 2
+      },
+      "status": 201,
+      "response": {
+        "id": "97baf520-c2da-47be-8884-705a95dd8b51",
+        "game": {
+          "id": "84c7d869-d63c-4e8c-a83c-9f4d9221f118",
+          "title": "Twin Trails",
+          "platform": "PC",
+          "display_mode": "split_screen",
+          "min_players": 2,
+          "max_players": 2
+        },
+        "host_id": "alice",
+        "controller_count": 2,
+        "capacity": 2,
+        "status": "LOBBY",
+        "players": [
+          {
+            "player_id": "alice",
+            "slot": 1,
+            "ready": false
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "url": "http://localhost:8002/sessions/97baf520-c2da-47be-8884-705a95dd8b51/start",
+      "request": {
+        "player_id": "alice"
+      },
+      "status": 409,
+      "response": {
+        "detail": "Minimum players must join and every player must be ready"
+      }
+    },
+    {
+      "method": "POST",
+      "url": "http://localhost:8002/sessions/97baf520-c2da-47be-8884-705a95dd8b51/players",
+      "request": {
+        "player_id": "bob"
+      },
+      "status": 200,
+      "response": {
+        "id": "97baf520-c2da-47be-8884-705a95dd8b51",
+        "game": {
+          "id": "84c7d869-d63c-4e8c-a83c-9f4d9221f118",
+          "title": "Twin Trails",
+          "platform": "PC",
+          "display_mode": "split_screen",
+          "min_players": 2,
+          "max_players": 2
+        },
+        "host_id": "alice",
+        "controller_count": 2,
+        "capacity": 2,
+        "status": "LOBBY",
+        "players": [
+          {
+            "player_id": "alice",
+            "slot": 1,
+            "ready": false
+          },
+          {
+            "player_id": "bob",
+            "slot": 2,
+            "ready": false
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "url": "http://localhost:8002/sessions/97baf520-c2da-47be-8884-705a95dd8b51/players",
+      "request": {
+        "player_id": "eve"
+      },
+      "status": 409,
+      "response": {
+        "detail": "Session full"
+      }
+    },
+    {
+      "method": "PUT",
+      "url": "http://localhost:8002/sessions/97baf520-c2da-47be-8884-705a95dd8b51/players/alice/ready",
+      "request": {
+        "ready": true
+      },
+      "status": 200,
+      "response": {
+        "id": "97baf520-c2da-47be-8884-705a95dd8b51",
+        "game": {
+          "id": "84c7d869-d63c-4e8c-a83c-9f4d9221f118",
+          "title": "Twin Trails",
+          "platform": "PC",
+          "display_mode": "split_screen",
+          "min_players": 2,
+          "max_players": 2
+        },
+        "host_id": "alice",
+        "controller_count": 2,
+        "capacity": 2,
+        "status": "LOBBY",
+        "players": [
+          {
+            "player_id": "alice",
+            "slot": 1,
+            "ready": true
+          },
+          {
+            "player_id": "bob",
+            "slot": 2,
+            "ready": false
+          }
+        ]
+      }
+    },
+    {
+      "method": "PUT",
+      "url": "http://localhost:8002/sessions/97baf520-c2da-47be-8884-705a95dd8b51/players/bob/ready",
+      "request": {
+        "ready": true
+      },
+      "status": 200,
+      "response": {
+        "id": "97baf520-c2da-47be-8884-705a95dd8b51",
+        "game": {
+          "id": "84c7d869-d63c-4e8c-a83c-9f4d9221f118",
+          "title": "Twin Trails",
+          "platform": "PC",
+          "display_mode": "split_screen",
+          "min_players": 2,
+          "max_players": 2
+        },
+        "host_id": "alice",
+        "controller_count": 2,
+        "capacity": 2,
+        "status": "LOBBY",
+        "players": [
+          {
+            "player_id": "alice",
+            "slot": 1,
+            "ready": true
+          },
+          {
+            "player_id": "bob",
+            "slot": 2,
+            "ready": true
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "url": "http://localhost:8002/sessions/97baf520-c2da-47be-8884-705a95dd8b51/start",
+      "request": {
+        "player_id": "alice"
+      },
+      "status": 200,
+      "response": {
+        "id": "97baf520-c2da-47be-8884-705a95dd8b51",
+        "game": {
+          "id": "84c7d869-d63c-4e8c-a83c-9f4d9221f118",
+          "title": "Twin Trails",
+          "platform": "PC",
+          "display_mode": "split_screen",
+          "min_players": 2,
+          "max_players": 2
+        },
+        "host_id": "alice",
+        "controller_count": 2,
+        "capacity": 2,
+        "status": "IN_PROGRESS",
+        "players": [
+          {
+            "player_id": "alice",
+            "slot": 1,
+            "ready": true
+          },
+          {
+            "player_id": "bob",
+            "slot": 2,
+            "ready": true
+          }
+        ]
+      }
+    },
+    {
+      "method": "POST",
+      "url": "http://localhost:8002/sessions/97baf520-c2da-47be-8884-705a95dd8b51/finish",
+      "request": {
+        "player_id": "alice"
+      },
+      "status": 200,
+      "response": {
+        "id": "97baf520-c2da-47be-8884-705a95dd8b51",
+        "game": {
+          "id": "84c7d869-d63c-4e8c-a83c-9f4d9221f118",
+          "title": "Twin Trails",
+          "platform": "PC",
+          "display_mode": "split_screen",
+          "min_players": 2,
+          "max_players": 2
+        },
+        "host_id": "alice",
+        "controller_count": 2,
+        "capacity": 2,
+        "status": "COMPLETED",
+        "players": [
+          {
+            "player_id": "alice",
+            "slot": 1,
+            "ready": true
+          },
+          {
+            "player_id": "bob",
+            "slot": 2,
+            "ready": true
+          }
+        ]
+      }
+    },
+    {
+      "method": "GET",
+      "url": "http://localhost:8002/sessions/97baf520-c2da-47be-8884-705a95dd8b51",
+      "request": null,
+      "status": 200,
+      "response": {
+        "id": "97baf520-c2da-47be-8884-705a95dd8b51",
+        "game": {
+          "id": "84c7d869-d63c-4e8c-a83c-9f4d9221f118",
+          "title": "Twin Trails",
+          "platform": "PC",
+          "display_mode": "split_screen",
+          "min_players": 2,
+          "max_players": 2
+        },
+        "host_id": "alice",
+        "controller_count": 2,
+        "capacity": 2,
+        "status": "COMPLETED",
+        "players": [
+          {
+            "player_id": "alice",
+            "slot": 1,
+            "ready": true
+          },
+          {
+            "player_id": "bob",
+            "slot": 2,
+            "ready": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+NAME                         CPU(cores)   MEMORY(bytes)   
+catalog-5b479db9c6-tsxn4     11m          52Mi            
+catalog-db-789d8d5b6-c77f8   14m          28Mi            
+session-db-b9c8b48c-gvzkf    14m          29Mi            

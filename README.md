@@ -16,7 +16,7 @@ The service folders are Git submodules pinned to commits in their independent re
 
 Included: two independent service source trees, isolated databases, automated tests, Dockerfiles, Compose, Kubernetes manifests, optional autoscaling and CI workflows, Postman collection, implementation report and an actual local HTTP execution transcript.
 
-Before submission: fill in student/group details; review and adapt the solution; run Docker and Minikube; capture your own Postman and dashboard screenshots; record the demonstration video; insert evidence into the report; name the final ZIP using your student ID. Do not represent the local SQLite test as a PostgreSQL or Kubernetes deployment. The solution is published in the three repositories linked above. Cluster deployment still needs to be performed and verified.
+Verified on 30 October 2026: separate repositories, four Docker containers, PostgreSQL-backed HTTP checks, local Minikube deployment, dashboard inspection, independent scaling and persistence after restart. CI/CD deployment passed. See [deployment evidence](evidence/deployment/README.md). Before submission, add student details, Postman application screenshots and the demonstration video, then name the ZIP with your student ID.
 
 ## Part 1 Design
 
@@ -167,61 +167,34 @@ minikube start -p couchquest --driver=docker --cpus=2 --memory=2800 --kubernetes
 minikube -p couchquest kubectl -- --context couchquest get nodes
 minikube -p couchquest image build -t couchquest-catalog:1.0 catalog-service
 minikube -p couchquest image build -t couchquest-session:1.0 session-service
-kubectl create namespace couchquest --dry-run=client -o yaml | kubectl apply -f -
+python3 deployment/deploy.py
 ```
 
-Create local demonstration secrets. Replace each example password consistently in both fields before running. Do not commit real secrets. Kubernetes Secrets are not encryption by themselves.
+The deployment script explicitly targets the couchquest Minikube profile, generates local random database credentials if missing, applies resources and waits for rollouts. Existing Secrets are preserved. Credentials are never committed.
+
+Run these forwards in separate terminals (18001 and 18002 avoid the Compose ports):
 
 ```bash
-kubectl -n couchquest create secret generic catalog-secret \
-  --from-literal=password=ChangeCatalog123 \
-  --from-literal=database-url=postgresql+psycopg://catalog:ChangeCatalog123@catalog-db:5432/catalog \
-  --dry-run=client -o yaml | kubectl apply -f -
-kubectl -n couchquest create secret generic session-secret \
-  --from-literal=password=ChangeSessions123 \
-  --from-literal=database-url=postgresql+psycopg://sessions:ChangeSessions123@session-db:5432/sessions \
-  --dry-run=client -o yaml | kubectl apply -f -
-kubectl apply -f deployment/kubernetes.yaml
-kubectl -n couchquest rollout status deployment/catalog-db --timeout=180s
-kubectl -n couchquest rollout status deployment/session-db --timeout=180s
-kubectl -n couchquest rollout status deployment/catalog --timeout=180s
-kubectl -n couchquest rollout status deployment/session --timeout=180s
-kubectl -n couchquest get deployments,pods,services,pvc
+minikube -p couchquest kubectl -- --context couchquest -n couchquest port-forward service/catalog 18001:8000
+minikube -p couchquest kubectl -- --context couchquest -n couchquest port-forward service/session 18002:8000
 ```
 
-For access, stop local APIs or Compose first to free ports 8001 and 8002. Keep each port-forward command running in its own terminal:
-
-```bash
-kubectl -n couchquest port-forward service/catalog 8001:8000
-kubectl -n couchquest port-forward service/session 8002:8000
-```
-
-Run `python3 smoke_test.py` or the Postman collection. Port forwarding is a local access mechanism, not an externally exposed production endpoint.
+Then run `CATALOG_URL=http://127.0.0.1:18001 SESSION_URL=http://127.0.0.1:18002 python3 smoke_test.py`. Set the same URLs in Postman when testing Kubernetes.
 
 ### Dashboard and scaling analysis
 
 ```bash
 minikube -p couchquest dashboard
-kubectl -n couchquest scale deployment/session --replicas=2
-kubectl -n couchquest rollout status deployment/session
-kubectl -n couchquest get pods -o wide
-kubectl -n couchquest logs deployment/session --tail=50
-```
-
-Select the couchquest namespace in the dashboard. Capture Deployments showing desired versus available replicas; Pods showing Ready status and restarts; Services showing internal names and ports; PVCs showing Bound status. Explain that scaling the Session Deployment increases API replicas while Catalog and each database can retain their original counts. The two Session pods use the same Session PostgreSQL service. This demonstrates topology and availability, not a measured throughput improvement.
-
-For optional autoscaling after the APIs have initialized:
-
-```bash
+minikube -p couchquest kubectl -- --context couchquest -n couchquest scale deployment/session --replicas=2
+minikube -p couchquest kubectl -- --context couchquest -n couchquest rollout status deployment/session
+minikube -p couchquest kubectl -- --context couchquest -n couchquest get deployments,pods,services,pvc
 minikube -p couchquest addons enable metrics-server
-kubectl apply -f deployment/hpa.yaml
-kubectl -n couchquest get hpa
-kubectl -n couchquest top pods
+minikube -p couchquest kubectl -- --context couchquest -n couchquest top pods
 ```
 
-CPU utilization may initially be unknown while metrics warm up. A light demo may never trigger scale-out. Do not claim automatic scaling occurred unless you actually observe it under load. HPA controls replica counts once enabled, so use the earlier manual scaling demonstration before applying it.
+Select namespace couchquest. The recorded dashboard shows Catalog 1/1, Session 2/2, and each database 1/1. Both PVCs are Bound. Session data survived a rolling API restart. See the evidence analysis for startup restarts and measured resource snapshots. Manual scaling was demonstrated; optional `deployment/hpa.yaml` was not applied or load-tested.
 
-### Repository separation and optional CI
+### Repository separation and CI/CD
 
 The services are published in two separate repositories. To work on either independently:
 
@@ -241,7 +214,7 @@ The included workflow runs tests and builds a Docker image on push or pull reque
 
 ## Testing and evidence
 
-Automated checks cover catalog creation/read/filtering, invalid capacity and mode, missing games, readiness endpoints, session lifecycle, host-ID checks, repeated join, full sessions, leaving, cancellation, controller sufficiency, simultaneous join attempts, remote 404, upstream failure and continued use of an existing session during a Catalog outage. The included automated test results and HTTP transcript were produced using SQLite locally. PostgreSQL, container and Kubernetes execution must be verified separately on your machine.
+Automated checks cover catalog creation/read/filtering, invalid capacity and mode, missing games, readiness endpoints, session lifecycle, host-ID checks, repeated join, full sessions, leaving, cancellation, controller sufficiency, simultaneous join attempts, remote 404, upstream failure and continued use of an existing session during a Catalog outage. The included automated test results and HTTP transcript were produced using SQLite locally. Additional real PostgreSQL checks passed in both Docker and local Kubernetes; their transcripts are in evidence/deployment/.
 
 Import postman_collection.json. Its catalog_url and session_url default to localhost ports 8001 and 8002. Run requests in order; scripts save game_id and session_id automatically. The full-session rejection deliberately expects HTTP 409. Capture screenshots with URL, request body, response body and status visible. Do not use the supplied transcript as a substitute for screenshots requested by the assignment.
 

@@ -1,0 +1,41 @@
+namespace/couchquest created
+secret/catalog-secret created
+secret/session-secret created
+namespace/couchquest unchanged
+persistentvolumeclaim/catalog-data created
+service/catalog-db created
+deployment.apps/catalog-db created
+service/catalog created
+deployment.apps/catalog created
+persistentvolumeclaim/session-data created
+service/session-db created
+deployment.apps/session-db created
+service/session created
+deployment.apps/session created
+Waiting for deployment "catalog-db" rollout to finish: 0 of 1 updated replicas are available...
+deployment "catalog-db" successfully rolled out
+Waiting for deployment "catalog" rollout to finish: 0 of 1 updated replicas are available...
+deployment "catalog" successfully rolled out
+deployment "session-db" successfully rolled out
+deployment "session" successfully rolled out
+NAME                         READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/catalog      1/1     1            1           22s
+deployment.apps/catalog-db   1/1     1            1           22s
+deployment.apps/session      1/1     1            1           22s
+deployment.apps/session-db   1/1     1            1           22s
+
+NAME                             READY   STATUS    RESTARTS      AGE
+pod/catalog-5b479db9c6-tsxn4     1/1     Running   2 (15s ago)   22s
+pod/catalog-db-789d8d5b6-c77f8   1/1     Running   0             22s
+pod/session-7bdf57db49-tthzq     1/1     Running   2 (15s ago)   22s
+pod/session-db-b9c8b48c-gvzkf    1/1     Running   0             22s
+
+NAME                 TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)    AGE
+service/catalog      ClusterIP   10.107.123.219   <none>        8000/TCP   22s
+service/catalog-db   ClusterIP   10.106.89.199    <none>        5432/TCP   22s
+service/session      ClusterIP   10.104.44.36     <none>        8000/TCP   22s
+service/session-db   ClusterIP   10.110.186.119   <none>        5432/TCP   22s
+
+NAME                                 STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/catalog-data   Bound    pvc-2cceaa82-44cc-40cc-8905-2cce1615c729   1Gi        RWO            standard       <unset>                 22s
+persistentvolumeclaim/session-data   Bound    pvc-0922a250-9bb6-4809-8232-0b1a4ae02894   1Gi        RWO            standard       <unset>                 22s

@@ -1,0 +1,30 @@
+{
+  "verification": "Same original completed session retrieved after local cluster restart",
+  "response": {
+    "id": "95724a17-7513-4bdb-9bf2-740a4a27ae11",
+    "game": {
+      "id": "7c0affa8-a469-4851-b5f4-e61ed0efa10d",
+      "title": "Twin Trails",
+      "platform": "PC",
+      "display_mode": "split_screen",
+      "min_players": 2,
+      "max_players": 2
+    },
+    "host_id": "alice",
+    "controller_count": 2,
+    "capacity": 2,
+    "status": "COMPLETED",
+    "players": [
+      {
+        "player_id": "alice",
+        "slot": 1,
+        "ready": true
+      },
+      {
+        "player_id": "bob",
+        "slot": 2,
+        "ready": true
+      }
+    ]
+  }
+}

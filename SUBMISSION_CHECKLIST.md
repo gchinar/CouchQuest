@@ -4,16 +4,18 @@
 - [ ] Read, understand and adapt the implementation to your group's work and course rules.
 - [x] Publish catalog-service and session-service as two separate GitHub repositories.
 - [x] Replace the repository placeholders in the report with real links.
-- [ ] Run each repository's tests independently.
-- [ ] Run Docker Compose and verify the four containers and complete API workflow.
-- [ ] Run the Minikube deployment; verify PostgreSQL-backed API responses.
+- [x] Run each repository's tests independently.
+- [x] Run Docker Compose and verify the four containers and complete API workflow.
+- [x] Run the Minikube deployment; verify PostgreSQL-backed API responses.
 - [ ] Import and run the Postman collection; capture real API request/response screenshots.
-- [ ] Capture dashboard Deployments, Pods, Services and persistent volume evidence.
-- [ ] Demonstrate scaling Session to two pods and retrieval after an API restart.
-- [ ] Insert your screenshots and observations into the report's evidence section.
+- [x] Capture dashboard Deployments and resource listings for Pods, Services and persistent volumes.
+- [x] Demonstrate scaling Session to two pods and retrieval after an API restart.
+- [x] Insert deployment screenshots and observations into the report's evidence section.
 - [ ] Record a demonstration video; include it in the final ZIP or use an instructor-approved link.
 - [ ] Rename the report and final ZIP with your actual student ID; final ZIP pattern: STUDENT_ID_CouchQuest.zip.
 - [ ] Remove placeholder text and confirm every link/file works before LMS upload.
+
+- [x] Create and successfully run the CI/CD deployment pipeline.
 
 ## Suggested six minute video sequence
 

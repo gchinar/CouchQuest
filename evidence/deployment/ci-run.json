@@ -1,0 +1,161 @@
+{
+  "total_count": 1,
+  "jobs": [
+    {
+      "id": 123879537102,
+      "run_id": 40999250344,
+      "workflow_name": "CI and Minikube deployment",
+      "head_branch": "main",
+      "run_url": "https://api.github.com/repos/gchinar/CouchQuest/actions/runs/40999250344",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOVb7jZ88AAAAc18u5zg",
+      "head_sha": "2e268e4462f0492a0f23fa6cc9914028ed79bdc9",
+      "url": "https://api.github.com/repos/gchinar/CouchQuest/actions/jobs/123879537102",
+      "html_url": "https://github.com/gchinar/CouchQuest/actions/runs/40999250344/job/123879537102",
+      "status": "completed",
+      "conclusion": "success",
+      "created_at": "2026-10-30T03:46:39Z",
+      "started_at": "2026-10-30T03:46:41Z",
+      "completed_at": "2026-10-30T03:48:32Z",
+      "name": "test-build-deploy",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-30T03:46:42Z",
+          "completed_at": "2026-10-30T03:46:43Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-30T03:46:43Z",
+          "completed_at": "2026-10-30T03:46:45Z"
+        },
+        {
+          "name": "Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-30T03:46:45Z",
+          "completed_at": "2026-10-30T03:46:45Z"
+        },
+        {
+          "name": "Test Catalog independently",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-10-30T03:46:45Z",
+          "completed_at": "2026-10-30T03:46:57Z"
+        },
+        {
+          "name": "Test Session independently",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5,
+          "started_at": "2026-10-30T03:46:57Z",
+          "completed_at": "2026-10-30T03:46:59Z"
+        },
+        {
+          "name": "Install pinned Minikube",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6,
+          "started_at": "2026-10-30T03:46:59Z",
+          "completed_at": "2026-10-30T03:47:00Z"
+        },
+        {
+          "name": "Create temporary deployment cluster",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 7,
+          "started_at": "2026-10-30T03:47:00Z",
+          "completed_at": "2026-10-30T03:47:33Z"
+        },
+        {
+          "name": "Build independent service images in Minikube",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 8,
+          "started_at": "2026-10-30T03:47:33Z",
+          "completed_at": "2026-10-30T03:47:49Z"
+        },
+        {
+          "name": "Deploy application to Kubernetes",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 9,
+          "started_at": "2026-10-30T03:47:49Z",
+          "completed_at": "2026-10-30T03:48:17Z"
+        },
+        {
+          "name": "Verify deployed application through HTTP",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 10,
+          "started_at": "2026-10-30T03:48:17Z",
+          "completed_at": "2026-10-30T03:48:18Z"
+        },
+        {
+          "name": "Record deployment diagnostics",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 11,
+          "started_at": "2026-10-30T03:48:18Z",
+          "completed_at": "2026-10-30T03:48:19Z"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-30T03:48:19Z",
+          "completed_at": "2026-10-30T03:48:20Z"
+        },
+        {
+          "name": "Remove temporary CI cluster",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-30T03:48:20Z",
+          "completed_at": "2026-10-30T03:48:30Z"
+        },
+        {
+          "name": "Post Run actions/setup-python@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 25,
+          "started_at": "2026-10-30T03:48:30Z",
+          "completed_at": "2026-10-30T03:48:31Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 26,
+          "started_at": "2026-10-30T03:48:31Z",
+          "completed_at": "2026-10-30T03:48:31Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 27,
+          "started_at": "2026-10-30T03:48:31Z",
+          "completed_at": "2026-10-30T03:48:31Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/gchinar/CouchQuest/check-runs/123879537102",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "runner_id": 1000000004,
+      "runner_name": "GitHub Actions 1000000004",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    }
+  ]
+}
